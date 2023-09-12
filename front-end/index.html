@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="stylesheet" href="./css/login-page.css">
         <title>Genius Labb</title>
     </head>
     <body>
-        <div class="container">
-
+        <div class="login-container">
+            <form id="login-form">
+                <h2>Login</h2>
+                <input type="text" id="username-field" class="login-form-field" name="username" placeholder="Username">
+                <input type="password" id="password-field" class="login-form-field" name="password" placeholder="Password">
+                
+                <input type="submit" value="Login" id="login-form-submit">
+            </form>
         </div>
+
+        <script src="./scripts/login.js"></script>
     </body>
 </html>
