@@ -45,12 +45,11 @@ async def client_handler(websocket, path):
                 await websocket.send("failed")
         else:
             print(message)
+http_thread = threading.Thread(target=run_http_server)
 
+http_thread.start()
 
 server = websockets.serve(client_handler, "localhost", 8001)
 asyncio.get_event_loop().run_until_complete(server)
 asyncio.get_event_loop().run_forever()
 
-http_thread = threading.Thread(target=run_http_server)
-
-http_thread.start()
