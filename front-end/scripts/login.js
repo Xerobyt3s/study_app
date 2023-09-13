@@ -1,7 +1,7 @@
 const loginForm = document.getElementById("login-form");
 const loginButton = document.getElementById("login-form-submit");
 
-socket = new WebSocket("ws://10.31.13.77:9993");
+socket = new WebSocket("ws://localhost:8000");
 
 loginButton.addEventListener("click", (e) => {
     e.preventDefault();
@@ -11,8 +11,7 @@ loginButton.addEventListener("click", (e) => {
 })
 
 socket.addEventListener("open", (e) => {
-    e.preventDefault();
-    console.log("connected")
+    socket.send("connection established")
   });
 
 socket.onopen = function () {
