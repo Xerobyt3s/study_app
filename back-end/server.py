@@ -26,16 +26,21 @@ def run_http_server():
         httpd.serve_forever()
 
 async def client_handler(websocket, path):
-    print("server started")
     while True:
         message = await websocket.recv()
-        if message == "auth":
+
+        if message == "auth": #checks it its a authentication request or status message
             username = await websocket.recv()
             password = await websocket.recv()
+
+            #connects to database containing users
             cx = sqlite3.connect("Users.db")
             cu = cx.cursor()
-            password = hashlib.sha256(password.encode()).hexdigest()
-            cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password))
+
+            password = hashlib.sha256(password.encode()).hexdigest() #converts password to hash for comparasin against database
+
+            #checks database for matching users
+            cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password)) #note the use of whitelist to stop sql injections
             if cu.fetchall():
                 print(f"Authentication complete for: {username}")
                 await websocket.send("completed")
@@ -45,10 +50,12 @@ async def client_handler(websocket, path):
                 await websocket.send("failed")
         else:
             print(message)
+
 http_thread = threading.Thread(target=run_http_server)
 
-http_thread.start()
+http_thread.start() #starts the http server
 
+#starts the websocket server
 server = websockets.serve(client_handler, "localhost", 8001)
 asyncio.get_event_loop().run_until_complete(server)
 asyncio.get_event_loop().run_forever()
