@@ -18,10 +18,12 @@ async def client_handler(websocket, path):
 
             cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password))
             if cu.fetchall():
-                print("Authentication complete, have plesent stay!")
+                print(f"Authentication complete for: {username}")
+                await websocket.send("completed")
                 #placeholder for account actions
             else:
                 print("Authentication failed, please typ again")
+                await websocket.send("failed")
         else:
             print(message)
     

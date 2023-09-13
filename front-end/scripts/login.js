@@ -3,13 +3,17 @@ const loginButton = document.getElementById("login-form-submit");
 
 socket = new WebSocket("ws://localhost:8000");
 
-loginButton.addEventListener("click", (e) => {
+var auth_status
+
+loginButton.addEventListener("click", async e => {
     e.preventDefault();
     const username = loginForm.username.value;
     const password = loginForm.password.value;
-    socket.send("auth");
-    socket.send(username);
-    socket.send(password)
+    await socket.send("auth");
+    await socket.send(username);
+    await socket.send(password)
+
+    auth_status = await socket.recv()
 })
 
 socket.addEventListener("open", (e) => {
