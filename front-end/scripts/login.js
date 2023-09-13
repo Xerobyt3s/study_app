@@ -7,7 +7,9 @@ loginButton.addEventListener("click", (e) => {
     e.preventDefault();
     const username = loginForm.username.value;
     const password = loginForm.password.value;
-    socket.send(username + " " + password);
+    socket.send("auth");
+    socket.send(username);
+    socket.send(password)
 })
 
 socket.addEventListener("open", (e) => {

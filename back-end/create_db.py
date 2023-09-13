@@ -12,4 +12,8 @@ CREATE TABLE IF NOT EXISTS UserData (
 )
 """)
 
+admin_username, admin_password = "Admin", hashlib.sha256("Admin".encode()).hexdigest() 
+
+cu.execute("INSERT INTO UserData (Username, Password) VALUES (?, ?)", (admin_username, admin_password))
+
 cx.commit()
