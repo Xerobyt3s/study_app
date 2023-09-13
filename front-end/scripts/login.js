@@ -4,7 +4,7 @@ const loginButton = document.getElementById("login-form-submit");
 socket = new WebSocket("ws://localhost:8001");
 
 var auth_status
-
+//Send username and password entered in html form when login button is clicked
 loginButton.addEventListener("click", async e => {
     e.preventDefault();
     const username = loginForm.username.value;
@@ -12,14 +12,13 @@ loginButton.addEventListener("click", async e => {
     await socket.send("auth");
     await socket.send(username);
     await socket.send(password)
-
-    auth_status = socket.recv()
 })
-
+//If connected to websocket send "connection established" to websocket
 socket.addEventListener("open", (e) => {
     socket.send("connection established")
   });
-
-socket.onopen = function () {
-    
-};
+//When message is recieved it is printed to the console
+socket.addEventListener("message", (e) => {
+  auth_status = e.data
+  console.log(auth_status)
+})
