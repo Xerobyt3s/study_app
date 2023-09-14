@@ -6,7 +6,9 @@ import http.server
 import socketserver
 import threading
 import secrets
+import json
 
+ADDRESS = "localhost"
 PORT = 8000
 
 clients = {}
@@ -24,7 +26,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 def run_http_server():
     Handler = MyHTTPRequestHandler
-    with socketserver.TCPServer(("localhost", PORT), Handler) as httpd:
+    with socketserver.TCPServer((ADDRESS, PORT), Handler) as httpd:
         print("HTTP server serving at port", PORT)
         httpd.serve_forever()
 
@@ -35,10 +37,11 @@ async def client_handler(websocket):
     try:
         while websocket.open:
             message = await clients[user_id].recv()
+            message = json.loads(message)
 
-            if message == "auth": #checks it its a authentication request or status message
-                username = await clients[user_id].recv()
-                password = await clients[user_id].recv()
+            if message["type"] == "auth": #checks it its a authentication request or status message
+                username = message["username"]
+                password = message["password"]
 
                 #connects to database containing users
                 cx = sqlite3.connect("Users.db")
@@ -66,7 +69,7 @@ http_thread = threading.Thread(target=run_http_server)
 http_thread.start() #starts the http server
 
 #starts the websocket server
-server = websockets.serve(client_handler, "localhost", 8001)
+server = websockets.serve(client_handler, ADDRESS, 8001)
 asyncio.get_event_loop().run_until_complete(server)
 asyncio.get_event_loop().run_forever()
 

@@ -15,14 +15,12 @@ loginButton.addEventListener("click", async e => {
     e.preventDefault();
     const username = loginForm.username.value;
     const password = loginForm.password.value;
-    await socket.send("auth");
-    await socket.send(username);
-    await socket.send(password)
+    const event = {type: "auth", username: username, password: password}
+    socket.send(JSON.stringify(event));
 })
 //If connected to websocket send "connection established" to websocket
 socket.addEventListener("open", (e) => {
-    const event = { type: "init",}
-    socket.send(JSON.stringify(event))
+    console.log("connection established")
   });
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
@@ -32,12 +30,3 @@ socket.addEventListener("message", (e) => {
     window.location.href = "../html/main.html"
   }
 })
-
-
-function transferCredentials(){
-  if (auth_status == "completed"){
-    return username, password
-  }
-}
-
-export {transferCredentials}
