@@ -4,9 +4,12 @@ const loginButton = document.getElementById("login-form-submit");
 const address = "localhost"
 const port = 8001
 
-socket = new WebSocket(`ws://${address}:${port}`);
+var socket = new WebSocket(`ws://${address}:${port}`);
 
 var auth_status
+var username
+var password
+
 //Send username and password entered in html form when login button is clicked
 loginButton.addEventListener("click", async e => {
     e.preventDefault();
@@ -25,4 +28,16 @@ socket.addEventListener("open", (e) => {
 socket.addEventListener("message", (e) => {
   auth_status = e.data
   console.log(auth_status)
+  if (auth_status == "completed"){
+    window.location.href = "../html/main.html"
+  }
 })
+
+
+function transferCredentials(){
+  if (auth_status == "completed"){
+    return username, password
+  }
+}
+
+export {transferCredentials}
