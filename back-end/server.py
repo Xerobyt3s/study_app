@@ -5,8 +5,11 @@ import websockets
 import http.server
 import socketserver
 import threading
+import secrets
 
 PORT = 8000
+
+clients = {}
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -25,31 +28,38 @@ def run_http_server():
         print("HTTP server serving at port", PORT)
         httpd.serve_forever()
 
-async def client_handler(websocket, path):
-    while True:
-        message = await websocket.recv()
+async def client_handler(websocket):
+    user_id = secrets.token_bytes(12)   # identify user
+    clients[user_id] = websocket    #stores connections for seperate clients
 
-        if message == "auth": #checks it its a authentication request or status message
-            username = await websocket.recv()
-            password = await websocket.recv()
+    try:
+        while websocket.open:
+            message = await clients[user_id].recv()
 
-            #connects to database containing users
-            cx = sqlite3.connect("Users.db")
-            cu = cx.cursor()
+            if message == "auth": #checks it its a authentication request or status message
+                username = await clients[user_id].recv()
+                password = await clients[user_id].recv()
 
-            password = hashlib.sha256(password.encode()).hexdigest() #converts password to hash for comparasin against database
+                #connects to database containing users
+                cx = sqlite3.connect("Users.db")
+                cu = cx.cursor()
 
-            #checks database for matching users
-            cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password)) #note the use of whitelist to stop sql injections
-            if cu.fetchall():
-                print(f"Authentication complete for: {username}")
-                await websocket.send("completed")
-                #placeholder for account actions
+                password = hashlib.sha256(password.encode()).hexdigest() #converts password to hash for comparasin against database
+
+                #checks database for matching users
+                cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password)) #note the use of whitelist to stop sql injections
+                if cu.fetchall():
+                    print(f"Authentication complete for: {username}")
+                    await clients[user_id].send("completed")
+                    #placeholder for account actions
+                else:
+                    print("Authentication failed, please typ again")
+                    await clients[user_id].send("failed")
             else:
-                print("Authentication failed, please typ again")
-                await websocket.send("failed")
-        else:
-            print(message)
+                await clients[user_id].send("connection!")
+    finally:
+        del clients[user_id]
+    
 
 http_thread = threading.Thread(target=run_http_server)
 

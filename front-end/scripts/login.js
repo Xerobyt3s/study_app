@@ -18,7 +18,8 @@ loginButton.addEventListener("click", async e => {
 })
 //If connected to websocket send "connection established" to websocket
 socket.addEventListener("open", (e) => {
-    socket.send("connection established")
+    const event = { type: "init",}
+    socket.send(JSON.stringify(event))
   });
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
