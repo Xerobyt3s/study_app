@@ -14,11 +14,11 @@ function getCookie(cname) {
   return "";
 }
 
-console.log(document.cookie)
+console.log(document.cookie);
 
 let username = getCookie("Username");
 let password = getCookie("Password");
-console.log(`username is ${username} and password is ${password}`)
+console.log(`username is ${username} and password is ${password}`);
 
 const address = "localhost";
 const port = 8001;
@@ -31,9 +31,8 @@ socket.addEventListener("open", (e) => {
 });
 
 socket.addEventListener("message", (e) => {
-  auth_status = e.data;
-  console.log(auth_status);
-  if (auth_status == "failed") {
+  message = JSON.parse(e.data);
+  if (message["type"] == "auth" && message["auth_status"] == false) {
     window.location.href = "../";
   }
 });
