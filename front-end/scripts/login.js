@@ -24,11 +24,10 @@ socket.addEventListener("open", (e) => {
 });
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
-  auth_status = e.data;
-  console.log(auth_status);
-  if (auth_status == "completed") {
-    document.cookie = `Username=Admin`
-    document.cookie = `Password=Admin`
+  message = JSON.parse(e.data);
+  if (message["type"] == "auth" && message["auth_status"] == true) {
+    document.cookie = `Username=${username}`;
+    document.cookie = `Password=${password}`;
     window.location.href = "../html/main.html";
   }
 });
