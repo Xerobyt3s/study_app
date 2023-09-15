@@ -24,9 +24,8 @@ socket.addEventListener("open", (e) => {
   });
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
-  auth_status = e.data
-  console.log(auth_status)
-  if (auth_status == "completed"){
+  message = JSON.parse(e.data)
+  if (message["type"] == "auth" && message["auth_status"] == true){
     window.location.href = "../html/main.html"
   }
 })
