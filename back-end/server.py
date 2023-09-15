@@ -106,7 +106,8 @@ async def client_handler(websocket):
                     #informs client that the authentication failed
                     event = {"type": "answer", "content": None, "reason": "auth failed"}
                     await clients[user_id].send(json.dumps(event))
-            elif message["type"] == "create_user":
+            
+            elif message["type"] == "create_user": #expects a username, password and permission variable
                 username = message["username"]
                 password = message["password"]
                 permission = message["permission"]
@@ -120,6 +121,7 @@ async def client_handler(websocket):
                 #checks database for matching users
                 cu.execute("SELECT * FROM UserData WHERE Username = ?", (username)) #note the use of whitelist to stop sql injections
                 if not cu.fetchall():
+                    #if the user does not exist, creates the user
                     cu.execute("INSERT INTO UserData (Username, Password, Permission) VALUES (?, ?, ?)", (username, password, permission))
                     cu.commit()
                     event = {"type": "answer", "content": None, "reason": "user created"}
