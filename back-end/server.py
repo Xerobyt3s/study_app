@@ -36,7 +36,10 @@ async def client_handler(websocket):
 
     try:
         while websocket.open:
-            message = await clients[user_id].recv()
+            try:    #trys to recive message from client
+                message = await clients[user_id].recv()
+            except:
+                break
             message = json.loads(message)
 
             if message["type"] == "auth": #checks it its a authentication request or status message
@@ -44,16 +47,17 @@ async def client_handler(websocket):
                 password = message["password"]
 
                 #connects to database containing users
-                cx = sqlite3.connect("Users.db")
+                cx = sqlite3.connect("Data.db")
                 cu = cx.cursor()
 
                 password = hashlib.sha256(password.encode()).hexdigest() #converts password to hash for comparasin against database
 
                 #checks database for matching users
-                cu.execute("SELECT * FROM UserData WHERE Username = ? AND Password = ?", (username, password)) #note the use of whitelist to stop sql injections
-                if cu.fetchall():
+                cu.execute("SELECT Permission FROM UserData WHERE Username = ? AND Password = ?", (username, password))
+                auth = cu.fetchone() #note the use of whitelist to stop sql injections
+                if auth:
                     print(f"Authentication complete for: {username}")
-                    event = {"type": "auth", "auth_status": True}
+                    event = {"type": "auth", "auth_status": True, "permission": auth}
                     await clients[user_id].send(json.dumps(event))
                 else:
                     print("Authentication failed, please typ again")
@@ -64,11 +68,11 @@ async def client_handler(websocket):
                 #retrive data from request
                 username = message["username"]
                 password = message["password"]
-                database = message["from"]
+                table = message["from"]
                 item = message["item"]
 
                 #connects to database containing users
-                cx = sqlite3.connect("Users.db")
+                cx = sqlite3.connect("Data.db")
                 cu = cx.cursor()
 
                 password = hashlib.sha256(password.encode()).hexdigest() #converts password to hash for comparasin against database
@@ -78,7 +82,7 @@ async def client_handler(websocket):
                 if cu.fetchall():
                     try:
                         #tries to connect to database relevant to request
-                        cx = sqlite3.connect(f"{database}.db")
+                        cx = sqlite3.connect(f"Data.db")
                         cu = cx.cursor()
                     except:
                         #if it fails to connect to database, sends request back assuming the database does not exist
@@ -87,7 +91,7 @@ async def client_handler(websocket):
                         break
                     
                     #tries to retrive the item relevant to the request from the database
-                    cu.execute(f"SELECT {item} FROM UserData WHERE Username = ? AND Password = ?", (username, password))
+                    cu.execute(f"SELECT {item} FROM {table} WHERE Username = ? AND Password = ?", (username, password))
                     result = cu.fetchone()
 
                     if result:
@@ -102,6 +106,29 @@ async def client_handler(websocket):
                     #informs client that the authentication failed
                     event = {"type": "answer", "content": None, "reason": "auth failed"}
                     await clients[user_id].send(json.dumps(event))
+            elif message["type"] == "create_user":
+                username = message["username"]
+                password = message["password"]
+                permission = message["permission"]
+
+                #connects to database containing users
+                cx = sqlite3.connect("Data.db")
+                cu = cx.cursor()
+
+                password = hashlib.sha256(password.encode()).hexdigest()
+
+                #checks database for matching users
+                cu.execute("SELECT * FROM UserData WHERE Username = ?", (username)) #note the use of whitelist to stop sql injections
+                if not cu.fetchall():
+                    cu.execute("INSERT INTO UserData (Username, Password, Permission) VALUES (?, ?, ?)", (username, password, permission))
+                    cu.commit()
+                    event = {"type": "answer", "content": None, "reason": "user created"}
+                    await clients[user_id].send(json.dumps(event))
+                    print(f"User created: {username}")
+                else:
+                    event = {"type": "answer", "content": None, "reason": "user already exists"}
+                    await clients[user_id].send(json.dumps(event))
+            
             else:
                 await clients[user_id].send("connection!")
     finally:
