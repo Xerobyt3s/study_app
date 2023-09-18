@@ -33,6 +33,6 @@ socket.addEventListener("open", (e) => {
 socket.addEventListener("message", (e) => {
   message = JSON.parse(e.data);
   if (message["type"] == "auth" && message["auth_status"] == false) {
-    window.location.href = "../";
+    window.location.href = "../login.html";
   }
 });

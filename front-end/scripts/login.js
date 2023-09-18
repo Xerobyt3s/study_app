@@ -28,6 +28,6 @@ socket.addEventListener("message", (e) => {
   if (message["type"] == "auth" && message["auth_status"] == true) {
     document.cookie = `Username=${username}`;
     document.cookie = `Password=${password}`;
-    window.location.href = "../html/main.html";
+    window.location.href = "../main.html";
   }
 });

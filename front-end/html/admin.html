@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main</title>
-    <link rel="stylesheet" href="../css/main-page.css">
+    <link rel="stylesheet" href="../css/admin-page.css">
+    <title>Admin page</title>
 </head>
 <body>
-    
     <div class="side-bar" id="my-side-bar">
         <a href="javascript:void(0)" class="close-btn" onclick="closeBtn()">&times;</a>
         <a href="#">Hem</a>
@@ -19,15 +18,7 @@
     <div class="container">
         <a href="javascript:void(0)" class="open-btn" onclick="openBtn()">Menu</a>
     </div>
+    <script src="../scripts/sidebar.js"></script>
     <script src="../scripts/menu.js"></script>
-    <script>
-    function openBtn() {
-        document.getElementById("my-side-bar").style.width = "20%"
-    }
-    
-    function closeBtn() {
-        document.getElementById("my-side-bar").style.width = "0"
-    }
-    </script>
 </body>
 </html>
