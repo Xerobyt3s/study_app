@@ -2,6 +2,8 @@ const address = "localhost";
 const port = 8001;
 const createForm = document.getElementById("create-user-form");
 const createButton = document.getElementById("create-user-form-submit");
+let username = getCookie("Username");
+let password = getCookie("Password");
 var socket = new WebSocket(`ws://${address}:${port}`);
 
 function getCookie(cname) {
@@ -21,9 +23,6 @@ function getCookie(cname) {
 }
 
 console.log(document.cookie);
-
-let username = getCookie("Username");
-let password = getCookie("Password");
 console.log(`username is ${username} and password is ${password}`);
 
 //Send username and password entered in html form when login button is clicked

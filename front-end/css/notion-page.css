@@ -41,6 +41,10 @@ body {
     font-size: 40px;
 }
 
+.side-bar a:last-child {
+    background-color: red;
+}
+
 .container {
     display: flex;
     flex-wrap: wrap;
