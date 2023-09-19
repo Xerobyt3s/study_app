@@ -30,9 +30,20 @@ console.log(`username is ${username} and password is ${password}`);
 createButton.addEventListener("click", async (e) => {
   e.preventDefault();
   newUsername = createForm.username.value;
-  newPassword = createForm.password.value;;
-  newPermission = newPermission = createForm.permission.options[createForm.permission.selectedIndex].text;
-  console.log(newPermission);
+  newPassword = createForm.password.value;
+  newPermission = newPermission =
+    createForm.permission.options[createForm.permission.selectedIndex].text;
+  if (newUsername != "" && newPassword != "") {
+    socket.send(
+      JSON.stringify({
+        type: "create_user",
+        username: newUsername,
+        password: newPassword,
+        permission: newPermission,
+      })
+    );
+    console.log(newPermission);
+  }
 });
 
 //If connected to websocket send "connection established" to websocket
@@ -45,7 +56,7 @@ socket.addEventListener("open", (e) => {
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
   message = JSON.parse(e.data);
-  if (message["type"] == "auth" && message["auth_status"] == false) {
+  if (message["type"] == "auth" && message["auth_status"] == false && message["permission"] != "admin") {
     window.location.href = "../login.html";
   }
 });
