@@ -106,6 +106,25 @@ async def client_handler(websocket):
                     #informs client that the authentication failed
                     event = {"type": "answer", "content": None, "reason": "auth failed"}
                     await clients[user_id].send(json.dumps(event))
+
+            elif message["type"] == "pull": #this is a placeholder and expects a sql command
+                #retrive data from request 
+                quarry = message["quarry"]
+
+                cx = sqlite3.connect("Data.db")
+                cu = cx.cursor()
+
+                #tries to execute the quarry 
+                try:
+                    cu.execute(quarry)
+                    result = cu.fetchall()
+                    event = {"type": "answer", "content": result, "reason": "quarry executed"}
+                    await clients[user_id].send(json.dumps(event))
+                except:
+                    #if it fails to execute the quarry, informs the client
+                    event = {"type": "answer", "content": None, "reason": "quarry failed"}
+                    await clients[user_id].send(json.dumps(event))
+                    break
             
             elif message["type"] == "create_user": #expects a username, password and permission variable
                 username = message["username"]
@@ -119,11 +138,11 @@ async def client_handler(websocket):
                 password = hashlib.sha256(password.encode()).hexdigest()
 
                 #checks database for matching users
-                cu.execute("SELECT * FROM UserData WHERE Username = ?", (username)) #note the use of whitelist to stop sql injections
+                cu.execute("SELECT * FROM UserData WHERE Username = ?", (username,)) #note the use of whitelist to stop sql injections
                 if not cu.fetchall():
                     #if the user does not exist, creates the user
                     cu.execute("INSERT INTO UserData (Username, Password, Permission) VALUES (?, ?, ?)", (username, password, permission))
-                    cu.commit()
+                    cx.commit()
                     event = {"type": "answer", "content": None, "reason": "user created"}
                     await clients[user_id].send(json.dumps(event))
                     print(f"User created: {username}")
