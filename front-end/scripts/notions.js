@@ -33,10 +33,4 @@ socket.addEventListener("message", (e) => {
   if (message["type"] == "auth" && message["auth_status"] == false) {
     window.location.href = "../login.html";
   }
-  if (message["type"] == "auth" && message["permission"] == "Admin"){
-    const div = document.createElement('div');
-    div.className = 'admin-btn';
-    div.innerHTML = `<a href="./html/admin.html">Admin page</a>`;
-    document.body.appendChild(div);
-  }
 });

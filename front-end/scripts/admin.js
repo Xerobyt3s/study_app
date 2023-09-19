@@ -31,8 +31,7 @@ createButton.addEventListener("click", async (e) => {
   e.preventDefault();
   newUsername = createForm.username.value;
   newPassword = createForm.password.value;
-  newPermission = newPermission =
-    createForm.permission.options[createForm.permission.selectedIndex].text;
+  newPermission = createForm.permission.options[createForm.permission.selectedIndex].text;
   if (newUsername != "" && newPassword != "") {
     socket.send(
       JSON.stringify({
@@ -56,7 +55,10 @@ socket.addEventListener("open", (e) => {
 //When message is recieved it is printed to the console
 socket.addEventListener("message", (e) => {
   message = JSON.parse(e.data);
-  if (message["type"] == "auth" && message["auth_status"] == false && message["permission"] != "admin") {
+  if (message["type"] == "auth" && message["auth_status"] == false) {
     window.location.href = "../login.html";
+  }
+  if (message["permission"] != "Admin") {
+    window.location.href = "../";
   }
 });
