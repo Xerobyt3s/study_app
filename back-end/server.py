@@ -1,3 +1,4 @@
+from datetime import date
 import sqlite3
 import hashlib
 import asyncio
@@ -149,6 +150,34 @@ async def client_handler(websocket):
                 else:
                     event = {"type": "answer", "content": None, "reason": "user already exists"}
                     await clients[user_id].send(json.dumps(event))
+
+            elif message["type"] == "create_definition":
+                username = message["username"]
+                word = message["word"]
+                definition = message["definition"]
+                subject = message["subject"]
+                edit_date = date.today().strftime("%d/%m/%Y")
+
+                #connects to database containing users
+                cx = sqlite3.connect("Data.db")
+                cu = cx.cursor()
+
+                #checks database for matching words
+                cu.execute("SELECT * FROM Definitions WHERE Word = ?", (word,))
+
+                if not cu.fetchall():
+                    #if the word does not exist, creates the word
+                    cu.execute("INSERT INTO Definitions (Word, Definition, Subject, Author, EditDate) VALUES (?, ?, ?, ?, ?)", (word, definition, subject, username, edit_date))
+                    cx.commit()
+                    event = {"type": "answer", "content": None, "reason": "definition created"}
+                    await clients[user_id].send(json.dumps(event))
+                    print(f"Definition created: {word}")
+                else:
+                    cu.execute("UPDATE Definitions SET Definition = ?, Subject = ?, Author = ?, EditDate = ? WHERE Word = ?", (definition, subject, username, edit_date, word))
+                    cx.commit()
+                    event = {"type": "answer", "content": None, "reason": "definition edited"}
+                    await clients[user_id].send(json.dumps(event))
+                    print(f"Definition edited: {word}")
             
             else:
                 await clients[user_id].send("connection!")

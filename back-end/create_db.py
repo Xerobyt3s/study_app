@@ -13,8 +13,23 @@ CREATE TABLE IF NOT EXISTS UserData (
 )
 """)
 
+cu.execute("""
+CREATE TABLE IF NOT EXISTS Definitions (
+    id INTEGER PRIMARY KEY,
+    Word VARCHAR(255) NOT NULL,
+    Definition VARCHAR(255) NOT NULL,
+    Subject VARCHAR(255) NOT NULL,
+    Author VARCHAR(255) NOT NULL,
+    EditDate VARCHAR(255) NOT NULL
+)
+""")
+
+
 admin_username, admin_password, admin_permission = "Admin", hashlib.sha256("Admin".encode()).hexdigest(), "Admin" 
 
-cu.execute("INSERT INTO UserData (Username, Password, Permission) VALUES (?, ?, ?)", (admin_username, admin_password, admin_permission))
+cu.execute("SELECT * FROM UserData WHERE Username = ?", (admin_username,)) #note the use of whitelist to stop sql injections
+if not cu.fetchall():
+    #if the user does not exist, creates the user
+    cu.execute("INSERT INTO UserData (Username, Password, Permission) VALUES (?, ?, ?)", (admin_username, admin_password, admin_permission))
 
 cx.commit()
