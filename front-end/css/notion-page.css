@@ -5,7 +5,6 @@
 body {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
 }
 
 .side-bar {
@@ -63,7 +62,8 @@ body {
 
 .class-group{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     width: 15%;
     min-height: 90%;
     background-color: green;
@@ -71,19 +71,19 @@ body {
 
 .notion-board {
     width: 85%;
-    min-height: 90%;
+    height: 90%;
     background-color: yellow;
-    overflow-y: scroll;
+    overflow-y: scroll; /* Add this line */
 }
 
 .notion {
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: aquamarine;
+    background-color: pink;
     width: 99%;
     margin: 0.5%;
-    min-height: 7.5%;
+    min-height: 7.5vh;
 }
 
 .notion h3 {
@@ -107,4 +107,103 @@ body {
     right: 0;
     width: 7.5%;
     height: 10%;
+}
+
+.add-btn {
+    opacity: 0.7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 1%;
+    width: 10vh;
+    height: 10vh;
+    background-color: green;
+    border-radius: 100%;
+}
+
+.add-btn button {
+    opacity: 0.6;
+    display: flex;
+    background-color: greenyellow;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    font-size: 70px;
+}
+
+.add-btn button:hover {
+    opacity: 1;
+}
+
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 50%;
+    background-color: black;
+    color: aliceblue;
+    border-radius: 10px;
+}
+
+.popup-content h3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    height: 20%;
+    width: 100%;
+    font-size: 50px;
+}
+
+.popup-input {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 60%;
+}
+
+.popup-input input {
+    width: 100%;
+    height: 40%;
+    font-size: 30px;
+    border-radius: 10px;
+}
+
+.popup-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+}
+
+.popup-content button {
+    width: 100%;
+    height: 100%;
+    font-size: 30px;
+    border-radius: 10px;
 }

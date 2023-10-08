@@ -1,3 +1,8 @@
+const address = "localhost";
+const port = 8001;
+let username = getCookie("Username");
+let password = getCookie("Password");
+var socket = new WebSocket(`ws://${address}:${port}`);
 function getCookie(cname) {
   let name = cname + "=";
   let decodedCookie = decodeURIComponent(document.cookie);
@@ -13,12 +18,6 @@ function getCookie(cname) {
   }
   return "";
 }
-
-const address = "localhost";
-const port = 8001;
-let username = getCookie("Username");
-let password = getCookie("Password");
-var socket = new WebSocket(`ws://${address}:${port}`);
 
 console.log(document.cookie);
 console.log(`username is ${username} and password is ${password}`);

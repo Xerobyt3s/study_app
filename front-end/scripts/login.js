@@ -1,11 +1,8 @@
 const loginForm = document.getElementById("login-form");
 const loginButton = document.getElementById("login-form-submit");
-
 const address = "localhost";
 const port = 8001;
-
 var socket = new WebSocket(`ws://${address}:${port}`);
-
 var auth_status;
 var username;
 var password;
