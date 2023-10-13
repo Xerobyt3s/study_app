@@ -178,6 +178,12 @@ async def client_handler(websocket):
                     event = {"type": "answer", "content": None, "reason": "definition edited"}
                     await clients[user_id].send(json.dumps(event))
                     print(f"Definition edited: {word}")
+
+                cu.execute("SELECT * FROM Definitions WHERE Word = ?", (word,))
+                new_word = cu.fetchone()
+                event = {"type": "updated_definiton", "content": new_word, "reason": "definiton was updated"}
+                for client in clients:
+                    await client.send(json.dumps(event))
             
             else:
                 await clients[user_id].send("connection!")
